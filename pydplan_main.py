@@ -430,7 +430,7 @@ class pydplan_main(QMainWindow):
                 key = 'change'
                 controls[key] = QSpinBox()
                 controls[key].setRange(1, 100)
-                controls[key].setValue(thisGas.changeDepth)
+                controls[key].setValue(int(thisGas.changeDepth))
                 self.divePlan.objectOfWidget[controls[key]] = thisGas.setChangeDepth
                 controls[key].valueChanged.connect(self.tankConfigChange)
                 lay.addWidget(controls[key], 7, col )
@@ -438,7 +438,7 @@ class pydplan_main(QMainWindow):
             key = 'liters'
             controls[key] = QSpinBox()
             controls[key].setRange(1, 50)
-            controls[key].setValue(thisGas.liters)
+            controls[key].setValue(int(thisGas.liters))
             self.divePlan.objectOfWidget[controls[key]] = thisGas.setLiters
             controls[key].valueChanged.connect(self.tankConfigChange)
             lay.addWidget(controls[key],  8, col )
@@ -446,7 +446,7 @@ class pydplan_main(QMainWindow):
             key = 'bar'
             controls[key] = QSpinBox()
             controls[key].setRange(1, 300)
-            controls[key].setValue(thisGas.bar)
+            controls[key].setValue(int(thisGas.bar))
             self.divePlan.objectOfWidget[controls[key]] = thisGas.setBar
             controls[key].valueChanged.connect(self.tankConfigChange)
             lay.addWidget(controls[key], 9, col )

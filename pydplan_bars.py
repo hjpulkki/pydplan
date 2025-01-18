@@ -5,7 +5,7 @@
 # bar plotting tools
 
 from PyQt5 import QtGui
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRect, QLineF, QPointF
 from PyQt5.QtGui import QPainter, QPainterPath, QLinearGradient, QBrush, QPalette, QPen, QColor
 from PyQt5.QtWidgets import *
 from pydplan_buhlmann import *
@@ -66,7 +66,7 @@ class PlotTCbarsWidget(QWidget):
         profile = self.plan.profileSampled
         gfNow = profile[selected].gfNow
 
-        qp.drawText(0 , 9, '{}/{} Pamb={:.1f} depth= {:.1f} m time= {:.0f} s GF={:.0f}%'.format(
+        qp.drawText(QPointF(0 , 9), '{}/{} Pamb={:.1f} depth= {:.1f} m time= {:.0f} s GF={:.0f}%'.format(
             selected, maxnum, ambP, depth, profile[selected].time, gfNow*100 ))
 
 
@@ -94,7 +94,7 @@ class PlotTCbarsWidget(QWidget):
             color = colors[tc]
             qp.setPen(QPen(color, 1, Qt.SolidLine))
             x1 = 20+tc*30
-            qp.drawText(x1, 20, '{}'.format(tc))
+            qp.drawText(QPointF(x1, 20), '{}'.format(tc))
             if gfNowP >= ppTot:
                 brushN2 = QBrush(QColor(0,255, 0, 127))
                 brushHe = QBrush(QColor(0, 0, 255, 127))
@@ -103,9 +103,9 @@ class PlotTCbarsWidget(QWidget):
                 brushHe = QBrush(QColor(255, 0, 255, 127))
 
             qp.setBrush(brushN2)
-            qp.drawRect(x1, 20, 19, barN2)
+            qp.drawRect(QRect(int(x1), 20, 19, int(barN2)))
             qp.setBrush(brushHe)
-            qp.drawRect(x1, 20+barN2, 19, barHe)
+            qp.drawRect(QRect(x1, 20+int(barN2), 19, int(barHe)))
 
             # draw the Buhlmann tolerated ambient pressure (GF=100)
             if ambTolP >= ppTot:
@@ -113,17 +113,17 @@ class PlotTCbarsWidget(QWidget):
             else:
                 qp.setPen(QPen(Qt.red, 5, Qt.SolidLine))
             y = ambTolP * 50.0 + 20.0
-            qp.drawLine(x1, y, x1+20, y)
+            qp.drawLine(QLineF(x1, y, x1+20, y))
             #qp.drawText(x1, y+10, '{:.1f} m'.format(ambTolDepth))
-            qp.drawText(x1, y + 10, '{:.0f}%'.format(satPct))
+            qp.drawText(QPointF(x1, y + 10), '{:.0f}%'.format(satPct))
 
             # draw gradient factor limits, low and high lines
             yLow  = gfLowP * 50.0 +20.0
             yHigh = gfHighP * 50.0 +20.0
             qp.setPen(QPen(Qt.darkGray, 1, Qt.SolidLine))
-            qp.drawLine(x1, yLow, x1 + 10, yLow)
+            qp.drawLine(QLineF(x1, yLow, x1 + 10, yLow))
             qp.setPen(QPen(Qt.darkGreen, 1, Qt.SolidLine))
-            qp.drawLine(x1, yHigh, x1 + 10, yHigh)
+            qp.drawLine(QLineF(x1, yHigh, x1 + 10, yHigh))
             # draw actually used GF, green if OK, red if violating it
             yGF = gfNowP * 50.0 +20.0
             if gfNowP >=  ppTot:
@@ -131,10 +131,10 @@ class PlotTCbarsWidget(QWidget):
                 qp.setPen(QPen(Qt.green, 3, Qt.SolidLine))
             else :
                 qp.setPen(QPen(Qt.red, 5, Qt.SolidLine))
-            qp.drawLine(x1+10, yGF, x1 + 20, yGF)
+            qp.drawLine(QLineF(x1+10, yGF, x1 + 20, yGF))
 
         # draw the current depth = ambient pressure line
         y = ambP * 50.0 + 20.0
         qp.setPen(QPen(Qt.black, 2, Qt.SolidLine))
-        qp.drawLine(0, y, self.plot_width, y)
-        qp.drawText(500, y-3, '{:.1f} bar {:.1f} m'.format(ambP, depth))
+        qp.drawLine(QLineF(0, y, self.plot_width, y))
+        qp.drawText(QPointF(500, y-3), '{:.1f} bar {:.1f} m'.format(ambP, depth))
