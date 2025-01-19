@@ -215,7 +215,7 @@ def tanksCheck(diveplan: DivePlan, divephase: DivePhase, beginDepth=0.0, endDept
     return divephaseNext
 
 
-def calculatePlan(diveplan : DivePlan):
+def calculatePlan(diveplan : DivePlan, verbose=True):
     '''Calculates a valid diveplan
 
     :param diveplan:
@@ -345,8 +345,9 @@ def calculatePlan(diveplan : DivePlan):
             beginDepth = endDepth
             stepAscend = calculateStepAscend(beginDepth, intervalAscent)
             if (beginDepth - stepAscend) < model.leadCeilingStop:
-                print('ASCENDING bounce stop at {} m, runtime {}, index {}'
-                      .format(model.leadCeilingStop, runtime, index))
+                if verbose:
+                    print('ASCENDING bounce stop at {} m, runtime {}, index {}'
+                          .format(model.leadCeilingStop, runtime, index))
                 endDepth = model.leadCeilingStop
             else:
                 endDepth   = beginDepth - stepAscend
@@ -365,8 +366,9 @@ def calculatePlan(diveplan : DivePlan):
             beginDepth = endDepth
             stepAscend = calculateStepAscend(beginDepth, intervalAscent)
             if (beginDepth - stepAscend) < model.leadCeilingStop:
-                print('ASC_T bounce stop at {} m, runtime {}, index {}'
-                      .format(model.leadCeilingStop, runtime, index))
+                if verbose:
+                    print('ASC_T bounce stop at {} m, runtime {}, index {}'
+                          .format(model.leadCeilingStop, runtime, index))
                 endDepth = model.leadCeilingStop
             else:
                 endDepth   = beginDepth - stepAscend
@@ -462,7 +464,8 @@ def calculatePlan(diveplan : DivePlan):
                     # force the next depth to be at the step
                     if endDepth < model.leadCeilingStop:
                         # this is a bounce, but should not occur due to fixes done higher up
-                        print('BOUNCE at {} s {} m'.format(runtime, endDepth))
+                        if verbose:
+                            print('BOUNCE at {} s {} m'.format(runtime, endDepth))
                     beginDepth= model.leadCeilingStop
                     endDepth = beginDepth
                     # now set the gradient factor
