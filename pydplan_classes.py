@@ -78,13 +78,13 @@ class DivePlan():
         self.tankList = {
             TankType.BOTTOM:
                 ScubaTank(label = 'Bottom', name ='B', use=True,
-                          o2 = 21, he= 35,
+                          o2 = 21, he= 0,
                           SAC = 15, ppo2max = 1.4,
                           liters=24.0, bar=200.0, pressure=200.0,
                           useFromTime= 0, useUntilTime=0,
                           type='bottom', useOrder = 1, color = Qt.magenta),
             TankType.DECO1:
-                ScubaTank(label = 'deco 1', name ='D1', use=True,
+                ScubaTank(label = 'deco 1', name ='D1', use=False,
                           o2 = 50, he= 0,
                           changeDepth = 21.0,
                           SAC=13, ppo2max=1.6,
@@ -92,7 +92,7 @@ class DivePlan():
                           useFromTime= 0, useUntilTime=0,
                           type='deco', useOrder = 2, color = Qt.cyan),
             TankType.DECO2:
-                ScubaTank(label = 'deco 2', name ='D2', use=True,
+                ScubaTank(label = 'deco 2', name ='D2', use=False,
                           o2 = 100, he= 0,
                           changeDepth= 6.0,
                           SAC=13, ppo2max=1.6,

@@ -91,7 +91,7 @@ class PlotTCbarsWidget(QWidget):
             saturation = ppTot / ambP
             satPct = saturation * 100.0
 
-            color = colors[tc]
+            color = colors[tc % len(colors)]
             qp.setPen(QPen(color, 1, Qt.SolidLine))
             x1 = 20+tc*30
             qp.drawText(QPointF(x1, 20), '{}'.format(tc))

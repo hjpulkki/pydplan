@@ -128,7 +128,7 @@ class PlotPlanWidget(QWidget):
         self.drawDepthGrid(self.qp)
         self.drawTimeGrid(self.qp)
         self.drawCeilings(self.qp)
-        self.drawCeilingMargin(self.qp)
+        # self.drawCeilingMargin(self.qp)
         self.drawTanks(self.qp)
         self.drawTankPressure(self.qp)
         #self.drawTC(self.qp)
@@ -212,13 +212,13 @@ class PlotPlanWidget(QWidget):
 
         # draw the running average depth
         x1, y1 = (0, 0)
-        qp.setPen(QPen(Qt.lightGray, 1, Qt.SolidLine))
+        # qp.setPen(QPen(Qt.lightGray, 1, Qt.SolidLine))
         for point in  profileSampled:
             x = (point.time / self.totalTime) * self.plot_width
             y = point.depthRunAvg / self.depthMax * self.plot_height
-            qp.drawLine(QLineF(x1, y1, x, y))
+            # qp.drawLine(QLineF(x1, y1, x, y))
             x1, y1 = x, y
-        qp.drawText(QPointF(x + 10, y), 'AVG')
+        # qp.drawText(QPointF(x + 10, y), 'AVG')
 
         # now draw the tissue compartment ceilings one by one
         for tc in range(ModelPoint.COMPS):

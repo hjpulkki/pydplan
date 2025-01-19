@@ -47,7 +47,7 @@ class PlotHeatMapWidget(QWidget):
 
         # iterate all compartments
         for tc in range(ModelPoint.COMPS):
-            color = colors[tc]
+            color = colors[tc % len(colors)]
             hColor = QColor(Qt.white)
             #color = QColor(tc*15, 15+(tc*15), 255-tc*15)
             qp.setPen(QPen(color, 1, Qt.SolidLine))
@@ -67,19 +67,19 @@ class PlotHeatMapWidget(QWidget):
                 if ppTot < ambP:
                     # tissue is on gassisng show blue, 100% is totally dark, less is lighter
                     delta = 255 * (ambP - ppTot)/ambP
-                    hColor.setHsl(240, delta, delta)
+                    hColor.setHsl(240, int(delta), int(delta))
                     brush = QBrush(hColor)
                 else:
                     # tissue is supersaturated and offgassing, show green to red gradient
                     if ppTot < ambTolP:
                         # tissue is below limit, so not at red yet
                         delta = 100 * (ambTolP - ppTot) / ppTot
-                        hColor.setHsl(120, delta, delta)
+                        hColor.setHsl(240, int(delta), int(delta))
                         brush = QBrush(hColor)
                     else:
                         # exceeding limit, show red hot
                         delta = ppTot / ambTolP * 50 + 150
-                        hColor.setHsl(0, delta, 127)
+                        hColor.setHsl(0, int(delta), 127)
                         brush = QBrush(hColor)
                 x = n * xStep
                 y = tc* yStep
