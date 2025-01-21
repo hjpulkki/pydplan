@@ -215,7 +215,7 @@ def tanksCheck(diveplan: DivePlan, divephase: DivePhase, beginDepth=0.0, endDept
     return divephaseNext
 
 
-def calculatePlan(diveplan : DivePlan, verbose=True):
+def calculatePlan(diveplan : DivePlan, verbose=False):
     '''Calculates a valid diveplan
 
     :param diveplan:
@@ -257,6 +257,10 @@ def calculatePlan(diveplan : DivePlan, verbose=True):
     intervalAscent = 5.0
     intervalDeco = 60.0
     intervalTankChange = 60.0
+
+    dives = diveplan.nDives
+    surface_time = diveplan.surfaceTime
+
     # this is where we record the dive profile
     outProfile = []
 
@@ -305,6 +309,7 @@ def calculatePlan(diveplan : DivePlan, verbose=True):
             if endDepth >= diveplan.bottomDepth:
                 endDepth = diveplan.bottomDepth
                 divephase = DivePhase.BOTTOM
+                bottom_start_runtime = runtime
             tanksCheck(diveplan=diveplan, divephase= DivePhase.DESCENDING, beginDepth= beginDepth,
                         endDepth= endDepth, intervalMinutes= intervalMinutes, runtime=runtime)
 
@@ -332,7 +337,7 @@ def calculatePlan(diveplan : DivePlan, verbose=True):
             intervalMinutes = intervalBottom / 60.0
             beginDepth = diveplan.bottomDepth
             endDepth   = diveplan.bottomDepth
-            if runtime >= (diveplan.descTime + diveplan.bottomTime):
+            if runtime >= (bottom_start_runtime + diveplan.bottomTime):
                 divephase = DivePhase.ASCENDING
                 diveplan.ascentBegins = runtime # this controls many things!
                 ascending = True
@@ -401,9 +406,19 @@ def calculatePlan(diveplan : DivePlan, verbose=True):
             tanksCheck(diveplan, DivePhase.DECOEND, beginDepth, endDepth, intervalMinutes, runtime=runtime)
 
         elif divephase == DivePhase.SURFACE:
-            tank.useUntilTime = runtime
             tanksCheck(diveplan, DivePhase.SURFACE, beginDepth, endDepth, 0.1, runtime=runtime)
-            break
+            dives = dives - 1
+            if dives > 0:
+                tank.useUntilTime = runtime
+                runtime += surface_time * 60
+                intervalMinutes = surface_time
+                divephase = DivePhase.DESCENDING
+                diveplan.bottomTime = diveplan.diveDurations[-dives]
+                diveplan.GFhigh = diveplan.diveGFs[-dives]
+                diveplan.GFlow = diveplan.diveGFs[-dives]
+                gfObject = gradientFactor(GFlow=diveplan.GFlow, GFhigh=diveplan.GFhigh)
+            else:
+                break
         else:
             break
 

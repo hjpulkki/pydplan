@@ -57,6 +57,11 @@ class DivePlan():
         self.maxTCnitrogen = 0.0
         self.maxTChelium = 0.0
 
+        self.nDives = 1
+        self.surfaceTime = 180
+        self.diveDurations = []
+        self.diveGFs = []
+
     def setDefaults(self):
         self.GFhigh = 0.80
         self.GFlow = 0.30
