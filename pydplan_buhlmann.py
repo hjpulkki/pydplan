@@ -6,6 +6,7 @@
 #
 import math
 import copy
+import numpy as np
 
 class tcCoefficients():
     """
@@ -26,74 +27,104 @@ class tcCoefficients():
         self.NitrogenK  = math.log(2) / NitrogenHT
         self.HeliumK    = math.log(2) / HeliumHT
 
+standard_coef = [
+    tcCoefficients(name='1',
+                    NitrogenHT=5.00, HeliumHT=1.88,
+                    NitrogenA=1.1696, NitrogenB=0.5578,
+                    HeliumA=1.6189, HeliumB=0.4770),
+    tcCoefficients(name='2',
+                    NitrogenHT=8.00, HeliumHT=3.02,
+                    NitrogenA=1.0000, NitrogenB=0.6514,
+                    HeliumA=1.3830, HeliumB=0.5747),
+    tcCoefficients(name='3',
+                    NitrogenHT=12.50, HeliumHT=4.72,
+                    NitrogenA=0.8618, NitrogenB=0.7222,
+                    HeliumA=1.1919, HeliumB=0.6527),
+    tcCoefficients(name='4',
+                    NitrogenHT=18.50, HeliumHT=6.99,
+                    NitrogenA=0.7562, NitrogenB=0.7825,
+                    HeliumA=1.0458, HeliumB=0.7223),
+    tcCoefficients(name='5',
+                    NitrogenHT=27.00, HeliumHT=10.21,
+                    NitrogenA=0.6200, NitrogenB=0.8126,
+                    HeliumA=0.9220, HeliumB=0.7582),
+    tcCoefficients(name='6',
+                    NitrogenHT=38.30, HeliumHT=14.48,
+                    NitrogenA=0.5043, NitrogenB=0.8434,
+                    HeliumA=0.8205, HeliumB=0.7957),
+    tcCoefficients(name='7',
+                    NitrogenHT=54.30, HeliumHT=20.53,
+                    NitrogenA=0.4410, NitrogenB=0.8693,
+                    HeliumA=0.7305, HeliumB=0.8279),
+    tcCoefficients(name='8',
+                    NitrogenHT=77.00, HeliumHT=29.11,
+                    NitrogenA=0.4000, NitrogenB=0.8910,
+                    HeliumA=0.6502, HeliumB=0.8553),
+    tcCoefficients(name='9',
+                    NitrogenHT=109.00, HeliumHT=41.20,
+                    NitrogenA=0.3750, NitrogenB=0.9092,
+                    HeliumA=0.5950, HeliumB=0.8757),
+    tcCoefficients(name='10',
+                    NitrogenHT=146.00, HeliumHT=55.19,
+                    NitrogenA=0.3500, NitrogenB=0.9222,
+                    HeliumA=0.5545, HeliumB=0.8903),
+    tcCoefficients(name='11',
+                    NitrogenHT=187.00, HeliumHT=70.69,
+                    NitrogenA=0.3295, NitrogenB=0.9319,
+                    HeliumA=0.5333, HeliumB=0.8997),
+    tcCoefficients(name='12',
+                    NitrogenHT=239.00, HeliumHT=90.34,
+                    NitrogenA=0.3065, NitrogenB=0.9403,
+                    HeliumA=0.5189, HeliumB=0.9073),
+    tcCoefficients(name='13',
+                    NitrogenHT=305.00, HeliumHT=115.29,
+                    NitrogenA=0.2835, NitrogenB=0.9477,
+                    HeliumA=0.5181, HeliumB=0.9122),
+    tcCoefficients(name='14',
+                    NitrogenHT=390.00, HeliumHT=147.42,
+                    NitrogenA=0.2610, NitrogenB=0.9544,
+                    HeliumA=0.5176, HeliumB=0.9171),
+    tcCoefficients(name='15',
+                    NitrogenHT=498.00, HeliumHT=188.24,
+                    NitrogenA=0.2480, NitrogenB=0.9602,
+                    HeliumA=0.5172, HeliumB=0.9217),
+    tcCoefficients(name='16',
+                    NitrogenHT=635.00, HeliumHT=240.03,
+                    NitrogenA=0.2327, NitrogenB=0.9653,
+                    HeliumA=0.5119, HeliumB=0.9267),
+]
+
+ratio = 0.8  # Geometric progression ratio
+
+polynomial_A = np.poly1d([-0.00335953,  0.08297341, -0.6803127 ,  2.08160779])
+# polynomial_B = np.poly1d([ 0.00331777, -0.05901482,  0.37890823,  0.08855059])
+polynomial_B = np.poly1d([0.07521004, 0.52881163])
+
+generated_coefficients = list(reversed([
+    tcCoefficients(
+        name=str(i) + "/16",
+        NitrogenHT=standard_coef[0].NitrogenHT * math.pow(ratio, i),  # Exponential decrease
+        HeliumHT=standard_coef[0].NitrogenHT * math.pow(ratio, i) * 0.4,  # Helium HT is proportionally smaller
+        
+        # NitrogenA=standard_coef[0].NitrogenA,
+        # NitrogenB=standard_coef[0].NitrogenB,
+        
+        # NitrogenA=standard_coef[0].NitrogenA + i * 0.08,  # Slightly decrease A
+        # NitrogenB=standard_coef[0].NitrogenB - i*i * 0.005 - 0.05*i,  # Slightly increase B
+
+        NitrogenA = polynomial_A(np.log(standard_coef[0].NitrogenHT * math.pow(ratio, i))),
+        # NitrogenB = polynomial_B(np.log(standard_coef[0].NitrogenHT * math.pow(ratio, i))),
+        NitrogenB = 1,
+
+
+        HeliumA=1.6 - i * 0.02,  # Helium follows a similar adjustment
+        HeliumB=0.47 + i * 0.02
+    )
+    for i in range(-32, 8)
+]))
 
 BUHLMANN_COEF = {
-        "ZHL16c": [
-            tcCoefficients(name='1',
-                            NitrogenHT=5.00, HeliumHT=1.88,
-                            NitrogenA=1.1696, NitrogenB=0.5578,
-                            HeliumA=1.6189, HeliumB=0.4770),
-            tcCoefficients(name='2',
-                            NitrogenHT=8.00, HeliumHT=3.02,
-                            NitrogenA=1.0000, NitrogenB=0.6514,
-                            HeliumA=1.3830, HeliumB=0.5747),
-            tcCoefficients(name='3',
-                            NitrogenHT=12.50, HeliumHT=4.72,
-                            NitrogenA=0.8618, NitrogenB=0.7222,
-                            HeliumA=1.1919, HeliumB=0.6527),
-            tcCoefficients(name='4',
-                            NitrogenHT=18.50, HeliumHT=6.99,
-                            NitrogenA=0.7562, NitrogenB=0.7825,
-                            HeliumA=1.0458, HeliumB=0.7223),
-            tcCoefficients(name='5',
-                            NitrogenHT=27.00, HeliumHT=10.21,
-                            NitrogenA=0.6200, NitrogenB=0.8126,
-                            HeliumA=0.9220, HeliumB=0.7582),
-            tcCoefficients(name='6',
-                            NitrogenHT=38.30, HeliumHT=14.48,
-                            NitrogenA=0.5043, NitrogenB=0.8434,
-                            HeliumA=0.8205, HeliumB=0.7957),
-            tcCoefficients(name='7',
-                            NitrogenHT=54.30, HeliumHT=20.53,
-                            NitrogenA=0.4410, NitrogenB=0.8693,
-                            HeliumA=0.7305, HeliumB=0.8279),
-            tcCoefficients(name='8',
-                            NitrogenHT=77.00, HeliumHT=29.11,
-                            NitrogenA=0.4000, NitrogenB=0.8910,
-                            HeliumA=0.6502, HeliumB=0.8553),
-            tcCoefficients(name='9',
-                            NitrogenHT=109.00, HeliumHT=41.20,
-                            NitrogenA=0.3750, NitrogenB=0.9092,
-                            HeliumA=0.5950, HeliumB=0.8757),
-            tcCoefficients(name='10',
-                            NitrogenHT=146.00, HeliumHT=55.19,
-                            NitrogenA=0.3500, NitrogenB=0.9222,
-                            HeliumA=0.5545, HeliumB=0.8903),
-            tcCoefficients(name='11',
-                            NitrogenHT=187.00, HeliumHT=70.69,
-                            NitrogenA=0.3295, NitrogenB=0.9319,
-                            HeliumA=0.5333, HeliumB=0.8997),
-            tcCoefficients(name='12',
-                            NitrogenHT=239.00, HeliumHT=90.34,
-                            NitrogenA=0.3065, NitrogenB=0.9403,
-                            HeliumA=0.5189, HeliumB=0.9073),
-            tcCoefficients(name='13',
-                            NitrogenHT=305.00, HeliumHT=115.29,
-                            NitrogenA=0.2835, NitrogenB=0.9477,
-                            HeliumA=0.5181, HeliumB=0.9122),
-            tcCoefficients(name='14',
-                            NitrogenHT=390.00, HeliumHT=147.42,
-                            NitrogenA=0.2610, NitrogenB=0.9544,
-                            HeliumA=0.5176, HeliumB=0.9171),
-            tcCoefficients(name='15',
-                            NitrogenHT=498.00, HeliumHT=188.24,
-                            NitrogenA=0.2480, NitrogenB=0.9602,
-                            HeliumA=0.5172, HeliumB=0.9217),
-            tcCoefficients(name='16',
-                            NitrogenHT=635.00, HeliumHT=240.03,
-                            NitrogenA=0.2327, NitrogenB=0.9653,
-                            HeliumA=0.5119, HeliumB=0.9267),
-        ],
+        "ZHL16c": generated_coefficients  # + standard_coef
     }
 
 
