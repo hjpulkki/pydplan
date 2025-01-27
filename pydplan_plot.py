@@ -338,8 +338,8 @@ class PlotPlanWidget(QWidget):
             bgPath.lineTo(x2, self.plot_height+10)
             bgPath.closeSubpath()
             gradient = QLinearGradient(0, 0, 0, 100)
-            gradient.setColorAt(0.0, tank.color)
-            gradient.setColorAt(1.0, tank.color)
+            gradient.setColorAt(0.0, QColor(tank.color))
+            gradient.setColorAt(1.0, QColor(tank.color))
             qp.setBrush(QBrush(gradient))
             qp.drawPath(bgPath)
             text = '{} ({}/{})'.format(tank.name, tank.o2, tank.he)
@@ -368,7 +368,7 @@ class PlotPlanWidget(QWidget):
             if thisTank != previousTank:
                 if lastPressure :
                     qp.drawText(QPointF(x -5,y1) , '{:.0f}'.format(lastPressure))
-                qp.setPen(QPen(thisTank.color, 2, Qt.SolidLine))
+                qp.setPen(QPen(QColor(thisTank.color), 2, Qt.SolidLine))
                 qp.drawText(QPointF(x + 2, y), '{:.0f}'.format(point.currentTankPressure))
                 y1 = y
 

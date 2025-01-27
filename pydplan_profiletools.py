@@ -282,7 +282,7 @@ def calculatePlan(diveplan : DivePlan, verbose=False):
     currentDecoDone = -1 # FIXME: ugly hack, see below
     while True :
         index += 1
-        if index > 500:
+        if index > 5000:
             print('index >500')
             raise ValueError('over 500 iterations, aborting')
             break
